@@ -72,8 +72,9 @@
   </div>
 
   <script src="/app.js"></script>
-<script>
-  // Inline fallback submit handler — saves form directly to localStorage and redirects
+
+  <!-- Inline fallback submit handler — ensures Save works even if app wiring has issues -->
+  <script>
   (function(){
     const LS = 'rohan_tasks_v1';
     function nowISO(){ return new Date().toISOString(); }
@@ -96,17 +97,16 @@
           const id = 't_' + Date.now();
           const task = { id, company, department, personName, followDate, followTime, status, notes, createdAt: nowISO() };
           const arr = getTasks(); arr.push(task); saveTasks(arr);
-          // redirect to dashboard
           location.href = '/index.html';
         } catch (e) {
           alert('Save failed: ' + e.message);
         }
       });
 
-      // make Cancel button go back
-      const cancel = document.getElementById('cancel');
-      if(cancel) cancel.addEventListener('click', ()=> location.href = '/index.html');
+      const cancel = document.getElementById('cancel'); if(cancel) cancel.addEventListener('click', ()=> location.href = '/index.html');
+      const back = document.getElementById('back'); if(back) back.addEventListener('click', ()=> location.href = '/index.html');
     });
   })();
-</script></body>
+  </script>
+</body>
 </html>
