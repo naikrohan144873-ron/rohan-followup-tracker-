@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Unregister SW & Clear Cache</title>
+  <style>body{font-family:Arial;padding:18px;background:#f6f8fb} button{padding:10px 14px;border-radius:8px;margin:8px}</style>
+</head>
+<body>
+  <h2>Unregister Service Worker & Clear Cache</h2>
+  <p>This page will unregister any service worker registered for this origin and clear caches. Use this to force the site to load fresh files.</p>
+  <button id="run">Unregister & Clear</button>
+  <pre id="out"></pre>
+
+<script>
+const out = msg => { document.getElementById('out').textContent += msg + '\n'; }
+
+document.getElementById('run').addEventListener('click', async ()=>{
+  try {
+    // unregister all service workers
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      if (regs.length === 0) out('No service worker registrations found.');
+      for (const r of regs) {
+        const ok = await r.unregister();
+        out('Unregistered service worker: ' + ok);
+      }
+    } else out('ServiceWorker API not supported.');
+
+    // clear all caches
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      for (const k of keys) {
+        await caches.delete(k);
+        out('Deleted cache: ' + k);
+      }
+    } else out('Cache API not supported.');
+
+    // also clear site data (localStorage preserved) - do NOT clear localStorage
+    out('Done. Reloading to apply changes...');
+    setTimeout(()=> location.href = '/index.html?nocache=1', 800);
+  } catch (e) {
+    out('Error: ' + e);
+  }
+});
+</script>
+</body>
+</html>
