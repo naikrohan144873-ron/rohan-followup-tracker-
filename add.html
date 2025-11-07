@@ -72,5 +72,41 @@
   </div>
 
   <script src="/app.js"></script>
-</body>
+<script>
+  // Inline fallback submit handler — saves form directly to localStorage and redirects
+  (function(){
+    const LS = 'rohan_tasks_v1';
+    function nowISO(){ return new Date().toISOString(); }
+    function getTasks(){ try{ return JSON.parse(localStorage.getItem(LS) || '[]'); }catch(e){ return []; } }
+    function saveTasks(t){ localStorage.setItem(LS, JSON.stringify(t)); }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const form = document.getElementById('followUpForm');
+      if(!form) return;
+      form.addEventListener('submit', (ev)=>{
+        ev.preventDefault();
+        try {
+          const company = document.getElementById('company')?.value || '';
+          const department = document.getElementById('department')?.value || '';
+          const personName = document.getElementById('personName')?.value || '';
+          const followDate = document.getElementById('followDate')?.value || '';
+          const followTime = document.getElementById('followTime')?.value || '';
+          const status = document.getElementById('status')?.value || 'Pending';
+          const notes = document.getElementById('notes')?.value || '';
+          const id = 't_' + Date.now();
+          const task = { id, company, department, personName, followDate, followTime, status, notes, createdAt: nowISO() };
+          const arr = getTasks(); arr.push(task); saveTasks(arr);
+          // redirect to dashboard
+          location.href = '/index.html';
+        } catch (e) {
+          alert('Save failed: ' + e.message);
+        }
+      });
+
+      // make Cancel button go back
+      const cancel = document.getElementById('cancel');
+      if(cancel) cancel.addEventListener('click', ()=> location.href = '/index.html');
+    });
+  })();
+</script></body>
 </html>
