@@ -17,10 +17,13 @@
       </div>
       <div class="h-actions">
         <button class="icon-btn" id="openList" title="All tasks">☰</button>
-        <!-- Header Add button -->
-        <button class="icon-btn add-top" id="addBtnTop" title="Add Follow-Up">＋</button>
         <button class="icon-btn" id="openSettings" title="Settings">⚙️</button>
       </div>
+    </div>
+
+    <!-- Slightly-below-header floating Add button (not touching header or cards) -->
+    <div class="top-add-wrap">
+      <button class="icon-btn add-floating" id="addBtnFloating" title="Add Follow-Up">＋</button>
     </div>
 
     <div class="search">
@@ -51,6 +54,7 @@
       <div id="taskSection" class="task-list"></div>
     </div>
 
+    <!-- Large bottom add (keeps existing UX) -->
     <button class="big-add" id="addBtn">+</button>
 
     <div class="bottom-nav">
