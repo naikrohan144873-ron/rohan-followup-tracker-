@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Settings</title>
+<link rel="manifest" href="/manifest.json"/><link rel="stylesheet" href="/style.css"/></head>
+<body>
+<div class="app">
+  <div class="header"><div class="h-title">Settings</div><div class="h-actions"><button class="icon-btn" id="backSettings">←</button></div></div>
+  <div class="container">
+    <label>Daily Reminder Time<input id="reminderTime" type="time" class="input"/></label>
+    <label>Theme<select id="themeToggle" class="input"><option value="light">Light</option><option value="dark">Dark</option></select></label>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button id="clearData" class="btn btn-danger">Clear All Data</button>
+      <button id="requestNotif" class="btn">Enable Notifications</button>
+    </div>
+  </div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
