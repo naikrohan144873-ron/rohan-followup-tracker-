@@ -28,7 +28,6 @@
   // Date helpers
   function dateTimeToDateObj(dateStr,timeStr){
     if(!dateStr || !timeStr) return null;
-    // Handle if timeStr already contains seconds/timezone - browser inputs give "HH:MM"
     return new Date(dateStr + 'T' + timeStr);
   }
   function isOverdue(task){
@@ -172,7 +171,6 @@
     });
   }
 
-  // Simple HTML escape to avoid markup injection when pasting in GH
   function escapeHtml(str){
     if(!str) return '';
     return str.replace(/[&<>"'`]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'})[m]; });
@@ -203,7 +201,6 @@
     const tasks = getTasks();
     const t = tasks.find(x=>x.id===id);
     if(!t) return alert('Task not found');
-    // reuse modal with form
     const html = `
       <h3>Edit Follow-Up</h3>
       <form id="editForm" class="form">
@@ -286,8 +283,14 @@
 
   // Page wiring
   function wireIndex(){
+    // bottom big add
     const addBtn = qs('#addBtn');
     if(addBtn) addBtn.addEventListener('click', ()=> location.href = '/add.html');
+
+    // top (floating below header) add
+    const addBtnFloating = qs('#addBtnFloating');
+    if(addBtnFloating) addBtnFloating.addEventListener('click', ()=> location.href = '/add.html');
+
     const openList = qs('#openList'); if(openList) openList.addEventListener('click', ()=> location.href='/list.html');
     const openSettings = qs('#openSettings'); if(openSettings) openSettings.addEventListener('click', ()=> location.href='/settings.html');
     const navHome = qs('#navHome'); if(navHome) navHome.addEventListener('click', ()=> location.href='/index.html');
@@ -312,7 +315,6 @@
       }
     }, 800);
 
-    // Re-render periodically to update overdue states
     setInterval(renderDashboard, 30*1000);
   }
 
@@ -323,8 +325,6 @@
       form.addEventListener('submit', (ev)=>{
         ev.preventDefault();
         addTaskFromForm(form);
-        // Save to localStorage done in function
-        // Redirect to dashboard and show instantly
         location.href = '/index.html';
       });
     }
@@ -370,30 +370,24 @@
     });
   }
 
-  // Notification scheduler (best-effort)
   function scheduleNotifications(){
-    // Checks every 30s; when current time matches reminderTime (HH:MM) triggers notification
     setInterval(async ()=>{
       const settings = getSettings();
       if(!settings.reminderTime) return;
       const now = new Date();
-      const hhmm = now.toTimeString().slice(0,5); // "HH:MM"
-      // simple guard to avoid multiple triggers in same minute
+      const hhmm = now.toTimeString().slice(0,5);
       const lastFired = settings._lastFired || '';
       if(hhmm === settings.reminderTime && lastFired !== hhmm){
         settings._lastFired = hhmm; saveSettings(settings);
-        // prepare today's tasks
         const tasks = getTasks().filter(isToday);
         const title = tasks.length ? `You have ${tasks.length} follow-up(s) today` : `No follow-ups today`;
         const body = tasks.slice(0,5).map(t=>`${t.personName} @ ${t.company} ${t.followTime||''}`).join('\n');
-        // If service worker available, send message to show notification
         if(navigator.serviceWorker && navigator.serviceWorker.controller){
           navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION', payload:{title, options:{body, tag:'daily-reminder', renotify:true}}});
         } else if(navigator.serviceWorker && navigator.serviceWorker.getRegistration){
           const reg = await navigator.serviceWorker.getRegistration();
           if(reg) reg.showNotification(title, {body, tag:'daily-reminder', renotify:true});
         } else {
-          // fallback in-app modal
           if(document.body) showModal('<h3>'+title+'</h3><div style="white-space:pre-line;margin-top:8px;">'+body+'</div><div style="text-align:right;margin-top:8px;"><button class="primary" id="closeRem2">OK</button></div>');
           setTimeout(()=>{ const b=document.getElementById('closeRem2'); if(b) b.addEventListener('click', closeModal); },200);
         }
@@ -403,12 +397,10 @@
     }, 30*1000);
   }
 
-  // Service worker registration
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('/service-worker.js').then(()=> console.log('SW registered')).catch(e=>console.warn('SW failed',e));
   }
 
-  // Initialize based on page
   document.addEventListener('DOMContentLoaded', ()=>{
     wireIndex(); wireAdd(); wireList(); wireSettings();
     scheduleNotifications();
