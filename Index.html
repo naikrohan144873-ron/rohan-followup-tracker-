@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Rohan's Follow Up Tracker - Dashboard</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/style.css" />
+  <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div>
+        <div class="h-title">Rohan's Follow Up Tracker</div>
+        <div class="small">Stay on top of your follow-ups</div>
+      </div>
+      <div class="h-actions">
+        <button class="icon-btn" id="openList" title="All tasks">☰</button>
+        <button class="icon-btn" id="openSettings" title="Settings">⚙️</button>
+      </div>
+    </div>
+
+    <div class="search">
+      <input id="searchInput" placeholder="Search by name / company / department" />
+    </div>
+
+    <div class="dashboard-cards container" id="dashboardCards">
+      <div class="card"><h3>Today's Tasks</h3><p id="todayCount">0</p></div>
+      <div class="card"><h3>Pending Tasks</h3><p id="pendingCount">0</p></div>
+      <div class="card"><h3>Completed</h3><p id="completedCount">0</p></div>
+      <div class="card"><h3>Overdue</h3><p id="overdueCount">0</p></div>
+    </div>
+
+    <div class="container">
+      <div style="display:flex;gap:8px;">
+        <select id="filterCompany" class="input"><option value="">All Companies</option></select>
+        <select id="filterDept" class="input"><option value="">All Departments</option></select>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <select id="filterStatus" class="input">
+          <option value="">All Statuses</option>
+          <option>Pending</option><option>In Progress</option><option>Completed</option>
+        </select>
+        <input id="filterDate" type="date" class="input" />
+      </div>
+
+      <div id="taskSection" class="task-list"></div>
+    </div>
+
+    <button class="big-add" id="addBtn">+</button>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" id="navHome">Home</button>
+      <button class="nav-btn" id="navList">List</button>
+      <button class="nav-btn" id="navAbout">About</button>
+    </div>
+  </div>
+
+  <div id="modalRoot" style="display:none;"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
