@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Debug - FollowUp Tracker</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;padding:14px;background:#f6f8fb}
+    button{padding:10px 14px;border-radius:10px;margin:6px}
+    pre{background:#fff;border-radius:8px;padding:12px;max-height:300px;overflow:auto}
+    .ok{color:green;font-weight:700}
+  </style>
+</head>
+<body>
+  <h2>Debug: localStorage & app check</h2>
+  <div>
+    <button id="btnShow">Show localStorage (rohan_tasks_v1)</button>
+    <button id="btnAdd">Add TEST task to localStorage</button>
+    <button id="btnClear">Clear tasks (remove key)</button>
+    <button id="btnOpen">Open Dashboard</button>
+  </div>
+  <p id="status"></p>
+  <pre id="out">Press "Show localStorage" to begin.</pre>
+
+<script>
+  const LS = 'rohan_tasks_v1';
+  function show(msg){ document.getElementById('out').textContent = msg; }
+  function setStatus(t){ document.getElementById('status').textContent = t; }
+
+  document.getElementById('btnShow').addEventListener('click', ()=>{
+    try{
+      const s = localStorage.getItem(LS) || '[]';
+      show(JSON.stringify(JSON.parse(s), null, 2));
+      setStatus('Read OK');
+    }catch(e){
+      show('ERROR reading localStorage: '+e);
+      setStatus('Read error');
+    }
+  });
+
+  document.getElementById('btnAdd').addEventListener('click', ()=>{
+    try{
+      const arr = JSON.parse(localStorage.getItem(LS)||'[]');
+      const t = {
+        id: 'dbg_'+Date.now(),
+        company:'Greenland',
+        department:'Sales',
+        personName:'DEBUG USER',
+        followDate: new Date().toISOString().slice(0,10),
+        followTime: '09:00',
+        status: 'Pending',
+        notes: 'Added by debug.html',
+        createdAt: new Date().toISOString()
+      };
+      arr.push(t);
+      localStorage.setItem(LS, JSON.stringify(arr));
+      show('Added test task. Now localStorage contains:\n\n' + JSON.stringify(arr, null, 2));
+      setStatus('Write OK');
+    }catch(e){
+      show('ERROR writing localStorage: '+e);
+      setStatus('Write error');
+    }
+  });
+
+  document.getElementById('btnClear').addEventListener('click', ()=>{
+    localStorage.removeItem(LS);
+    show('Key removed. localStorage is clean.');
+    setStatus('Cleared');
+  });
+
+  document.getElementById('btnOpen').addEventListener('click', ()=> {
+    location.href = '/index.html';
+  });
+
+  // show whether service worker is registered
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistration().then(r=>{
+      setStatus((r ? 'ServiceWorker registered' : 'No ServiceWorker'));
+    });
+  } else setStatus('No ServiceWorker support');
+</script>
+</body>
+</html>
